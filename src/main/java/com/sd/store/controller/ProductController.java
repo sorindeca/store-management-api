@@ -6,6 +6,10 @@ import com.sd.store.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,6 +51,27 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
     
+    @GetMapping("/paginated")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
+    public ResponseEntity<Page<Product>> getAllProductsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        
+        logger.info("Request to get all products with pagination: page={}, size={}, sortBy={}, sortDir={}", 
+                   page, size, sortBy, sortDir);
+        
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) 
+                   ? Sort.by(sortBy).descending() 
+                   : Sort.by(sortBy).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> products = productService.findAllProductsPaginated(pageable);
+        
+        return ResponseEntity.ok(products);
+    }
+    
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
@@ -63,6 +88,28 @@ public class ProductController {
         logger.info("Request to search products by name: {}", name);
 
         List<Product> products = productService.searchProductsByName(name);
+        return ResponseEntity.ok(products);
+    }
+    
+    @GetMapping("/search/paginated")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
+    public ResponseEntity<Page<Product>> searchProductsPaginated(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        
+        logger.info("Request to search products by name: {} with pagination: page={}, size={}, sortBy={}, sortDir={}", 
+                   name, page, size, sortBy, sortDir);
+        
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) 
+                   ? Sort.by(sortBy).descending() 
+                   : Sort.by(sortBy).ascending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> products = productService.searchProductsByNamePaginated(name, pageable);
+        
         return ResponseEntity.ok(products);
     }
     

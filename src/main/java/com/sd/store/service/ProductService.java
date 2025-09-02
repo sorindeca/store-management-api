@@ -1,6 +1,8 @@
 package com.sd.store.service;
 
 import com.sd.store.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,7 +18,11 @@ public interface ProductService {
     
     List<Product> findAllProducts();
     
+    Page<Product> findAllProductsPaginated(Pageable pageable);
+    
     List<Product> searchProductsByName(String name);
+    
+    Page<Product> searchProductsByNamePaginated(String name, Pageable pageable);
     
     Product updateProduct(Long id, Product product);
     

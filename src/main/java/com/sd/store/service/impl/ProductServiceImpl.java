@@ -7,6 +7,8 @@ import com.sd.store.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,9 +65,25 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     @Transactional(readOnly = true)
+    public Page<Product> findAllProductsPaginated(Pageable pageable) {
+        logger.debug("Finding all products with pagination: page={}, size={}, sort={}", 
+                    pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        return productRepository.findAll(pageable);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
     public List<Product> searchProductsByName(String name) {
         logger.debug("Searching products by name containing: {}", name);
         return productRepository.findByNameContainingIgnoreCase(name);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> searchProductsByNamePaginated(String name, Pageable pageable) {
+        logger.debug("Searching products by name containing: {} with pagination: page={}, size={}, sort={}", 
+                    name, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        return productRepository.findByNameContainingIgnoreCase(name, pageable);
     }
     
     @Override
