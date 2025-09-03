@@ -75,9 +75,10 @@ public class DataInitializer {
     private void seedProducts() {
         createProductIfAbsent("Laptop", "Gaming laptop", new BigDecimal("7999.99"), 10, "Electronics");
         createProductIfAbsent("Smartphone", "Iphone", new BigDecimal("5699.99"), 15, "Electronics");
-        createProductIfAbsent("Book", "Java programming guide", new BigDecimal("49.25"), 25, "Books");
-        createProductIfAbsent("Office Chair", "Ergonomic office chair", new BigDecimal("1000.00"), 8, "Furniture");
-        createProductIfAbsent("Coffee", "Coffee beans", new BigDecimal("40.50"), 50, "Food");
+        createProductIfAbsent("Book", "Java programming guide", new BigDecimal("49.25"), 51, "Books");
+        createProductIfAbsent("Office Chair", "Ergonomic office chair", new BigDecimal("1000.00"), 4, "Furniture");
+        createProductIfAbsent("Desk", "Adjustable desk", new BigDecimal("1500.00"), 0, "Furniture");
+        createProductIfAbsent("Coffee", "Coffee beans", new BigDecimal("40.50"), 8, "Food");
     }
 
     private void createProductIfAbsent(String name, String description, BigDecimal price, int quantity, String category) {

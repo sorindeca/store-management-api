@@ -32,4 +32,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findOutOfStockProducts();
     
     List<Product> findByQuantityGreaterThan(Integer quantity);
+    
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.quantity < :threshold")
+    long countByQuantityLessThan(@Param("threshold") Integer threshold);
+    
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.quantity = 0")
+    long countOutOfStockProducts();
 }
