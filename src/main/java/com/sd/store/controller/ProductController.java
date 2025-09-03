@@ -3,6 +3,13 @@ package com.sd.store.controller;
 import com.sd.store.dto.ProductDTO;
 import com.sd.store.model.Product;
 import com.sd.store.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "*")
+@Tag(name = "Product Management", description = "API for product management")
 public class ProductController {
     
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -36,7 +44,35 @@ public class ProductController {
     
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO) {
+    @Operation(
+        summary = "Add a new product",
+        description = "Creates a new product in the system. Requires ADMIN or MANAGER role."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Product created successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ProductDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid data - validation failed"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access forbidden - missing required permissions"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<ProductDTO> addProduct(
+            @Parameter(description = "Product data to add", required = true)
+            @Valid @RequestBody ProductDTO productDTO) {
         logger.info("Request to add new product: {}", productDTO.name());
         
         Product savedProduct = productService.addProduct(convertToProduct(productDTO));
@@ -45,6 +81,28 @@ public class ProductController {
     
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('EMPLOYEE')")
+    @Operation(
+        summary = "Get all products",
+        description = "Returns the complete list of all products in the system"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Product list retrieved successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = Product.class, type = "array")
+            )
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Access forbidden - missing required permissions"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
     public ResponseEntity<List<Product>> getAllProducts() {
         logger.info("Request to get all products");
         List<Product> products = productService.findAllProducts();
