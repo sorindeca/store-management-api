@@ -3,6 +3,7 @@ package com.sd.store.controller;
 import com.sd.store.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,8 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/metrics")
-public class MetricsController {
+@RequestMapping("/api/summary")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+public class SummaryController {
     
     private final ProductRepository productRepository;
     
@@ -26,12 +28,12 @@ public class MetricsController {
     @Value("${metrics.down.out-of-stock-threshold:5}")
     private int downOutOfStockThreshold;
     
-    public MetricsController(ProductRepository productRepository) {
+    public SummaryController(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
     
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> getHealthMetrics() {
+    @GetMapping("/")
+    public ResponseEntity<Map<String, Object>> getSummary() {
         Map<String, Object> health = new HashMap<>();
         
         try {
