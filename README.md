@@ -33,6 +33,7 @@ Spring Boot API for product management.
 - `PUT /api/products/{id}` - Update product
 - `PATCH /api/products/{id}/price` - Change price
 - `DELETE /api/products/{id}` - Delete product
+- `GET /api/summary/` - Store summary (ADMIN, MANAGER only)
 
 ## 📁 Structure
 
@@ -54,7 +55,7 @@ src/main/java/com/sd/store/
 - **Spring Security** - Authentication & Authorization
 - **Spring Data JPA** - Data persistence
 - **Spring Validation** - Input validation
-- **Spring Actuator** - Monitoring & metrics
+- **Spring Actuator** - Monitoring & health checks
 - **H2 Database** - Local development
 - **Flyway** - Database migrations
 - **OpenAPI/Swagger** - API documentation
